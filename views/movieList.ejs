@@ -17,27 +17,27 @@
             <thead>
                 <tr>
                     <th scope="col">Movie</th>
-                    <th scope="col">Released Year</th>
                     <th scope="col">Genre</th>
-                    <th scope="col">Production House</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 <% movies.forEach(element => { %>
                     <tr>
                         <td><%= element.name %></td>
-                        <td><%= element.released_year %></td>
                         <td><%= element.genre %></td>
-                        <% if (!element.ProductionHouseId) { %>
-                            <td>unknown</td>
-                        <% } else { %> 
-                            <td><%= element.ProductionHouse.name %></td>
-                        <% } %> 
-                        <div>
+                        <td><%= element.date %></td>
+                        <td><%= element.time %></td>
+                        <td><%= element.price %></td>
                             <td><a href="/movies/<%= element.id %>/edit"><button type="button" class="btn btn-info">Edit</button></a>
                                 <a class="ml-3" href="/movies/<%= element.id %>/delete"><button type="button" class="btn btn-info">Delete</button></a>
-                                <a class="ml-3" href="/movies/<%= element.id %>/add-cast"><button type="button" class="btn btn-info">Add Cast</button></a>
+                                    <a class="ml-3" href="/movies/<%= element.id %>/purchase"><button type="button" class="btn btn-info">Purchase</button></a>
+                                    <% if (!checkSeats2(customerMovies, element.id).length) { %>
+                                        <h5 class="alert alert-danger mt-3 text-center" style="width:55%">SOLD OUT</h5>
+                                    <% } %>
                             </td>
                         </div>
                     </tr>

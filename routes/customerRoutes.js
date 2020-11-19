@@ -1,16 +1,14 @@
 const route = require("express").Router();
-const CastController = require("../controllers/CastController");
+const CustomerController = require("../controllers/CustomerController");
 
-route.get("/", CastController.read);
+route.get("/", CustomerController.read);
 
-route.get("/add", CastController.addForm);
-route.post("/add", CastController.addPost);
+route.get("/add", CustomerController.addForm);
+route.post("/add", CustomerController.addPost);
 
-route.get("/:id/edit",CastController.editForm);
-route.post("/:id/edit", CastController.editPost);
+route.get("/:id/edit", CustomerController.editForm);
+route.post("/:id/edit", CustomerController.editPost);
 
-route.get("/:id/delete",CastController.delete);
-
-route.get("/:id/see-movies", CastController.seeMovies);
+route.get("/:id/delete", CustomerController.delete);
 
 module.exports = route;

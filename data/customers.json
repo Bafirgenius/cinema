@@ -26,5 +26,12 @@
         "phone_number" : "086455835464",
         "gender" : "female",
         "email" : "anisa@gmail.com"
+    },
+    {
+        "first_name" : "Rudyanto",
+        "last_name" : "Djong",
+        "phone_number" : "086455835464",
+        "gender" : "male",
+        "email" : "hactiv8rud@gmail.com"
     }
 ]

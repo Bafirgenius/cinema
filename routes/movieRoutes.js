@@ -11,7 +11,7 @@ route.post("/:id/edit", MovieController.editPost);
 
 route.get("/:id/delete", MovieController.delete);
 
-route.get("/:id/add-cast", MovieController.addCastForm);
-route.post("/:id/add-cast", MovieController.addCastPost);
+route.get("/:id/purchase", MovieController.purchaseForm);
+route.post("/:id/purchase", MovieController.purchasePost);
 
 module.exports = route;

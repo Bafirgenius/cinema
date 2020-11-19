@@ -1,15 +1,21 @@
-const ProductionHouseController = require("../controllers/ProductionHouseController");
-const CastController = require("../controllers/CastController");
-const { Movie, ProductionHouse, Cast, MovieCast } = require("../models/index");
+const { Movie, Customer, CustomerMovie } = require("../models/index");
+const checkSeats = require("../helpers/checkSeats");
+const checkSeats2 = require("../helpers/checkSeats2");
+const sendEmail = require("../helpers/sendEmail");
 
 class MovieController {
     static read(req, res) {
+        let movies = [];
         Movie.findAll({
-            order: [["released_year", "DESC"]],
-            include: ProductionHouse
+            include: Customer,
+            order: [["date", "ASC"]],
         })
             .then((data) => {
-                res.render("movieList", { movies: data });
+                movies = data;
+                return CustomerMovie.findAll()
+            })
+            .then((data) => {
+                res.render("movieList", { movies: movies, customerMovies: data, checkSeats2});
             })
             .catch((err) => {
                 res.send(err);
@@ -24,12 +30,10 @@ class MovieController {
     static addPost(req, res) {
         let obj = {
             name: req.body.name,
-            genre: req.body.genre
-        }
-        if (req.body.released_year.trim() !== "") {
-            obj.released_year = Number(req.body.released_year);
-        } else {
-            obj.released_year = req.body.released_year;
+            genre: req.body.genre,
+            date: req.body.date,
+            time: req.body.time,
+            price: req.body.price
         }
 
         Movie.create(obj)
@@ -54,17 +58,10 @@ class MovieController {
 
     static editForm(req, res) {
         const id = Number(req.params.id);
-        let foundMovie = {};
         Movie.findByPk(id)
             .then((data) => {
-                foundMovie = data;
-                return ProductionHouse.findAll({
-                    order: [["name", "ASC"]]
-                })
-            })
-            .then((data) => {
                 let errors = req.query.error ? req.query.error.split(",") : [];
-                res.render("editMovieForm", { movie: foundMovie, productionHouses: data, errors });
+                res.render("editMovieForm", { movie: data, errors });
             })
             .catch((err) => {
                 res.send(err);
@@ -73,15 +70,12 @@ class MovieController {
 
     static editPost(req, res) {
         const id = req.params.id;
-        const obj = {
+        let obj = {
             name: req.body.name,
             genre: req.body.genre,
-            ProductionHouseId: req.body.ProductionHouseId
-        }
-        if (req.body.released_year.trim() !== "") {
-            obj.released_year = Number(req.body.released_year);
-        } else {
-            obj.released_year = req.body.released_year;
+            date: req.body.date,
+            time: req.body.time,
+            price: req.body.price
         }
 
         Movie.update(obj, {
@@ -123,22 +117,22 @@ class MovieController {
             });
     }
 
-    static addCastForm(req, res) {
+    static purchaseForm(req, res) {
         const id = Number(req.params.id);
         let foundMovie = {};
-        let casts = [];
+        let customers = [];
         Movie.findByPk(id, {
-            include: Cast
+            include: Customer
         })
             .then((data) => {
                 foundMovie = data;
-                return Cast.findAll({
+                return Customer.findAll({
                     order: [["first_name", "ASC"]]
                 })
             })
             .then((data) => {
-                casts = data;
-                return MovieCast.findAll({
+                customers = data;
+                return CustomerMovie.findAll({
                     where: {
                         MovieId: id
                     }
@@ -146,38 +140,49 @@ class MovieController {
             })
             .then((data) => {
                 let errors = req.query.error ? req.query.error.split(",") : [];
-                res.render("addCastFormMovie", { movie: foundMovie, casts: casts, movieCasts: data, errors });
+                let availableSeats = checkSeats(data);
+                res.render("purchaseForm", { movie: foundMovie, customers: customers, customerMovies: data, availableSeats, errors });
             })
             .catch((err) => {
                 res.send(err);
             });    
     }
 
-    static addCastPost(req, res) {
-        const id = req.params.id;
+    static purchasePost(req, res) {
+        const id = Number(req.params.id);
         const obj = {
-            role: req.body.role,
+            seat: req.body.seat,
             MovieId: id,
-            CastId: req.body.CastId,
+            CustomerId: req.body.CustomerId,
         }
-    
-        MovieCast.create(obj)
+        let foundMovie = {};
+        let foundCustomer = {};
+        Movie.findByPk(id)
             .then((data) => {
-                res.redirect(`/movies/${id}/add-cast`);
+                foundMovie = data;
+                return Customer.findByPk(req.body.CustomerId)
+            })
+            .then((data) => {
+                foundCustomer = data;
+                return CustomerMovie.create(obj)
+            })
+            .then((data) => {
+                let message = `${foundMovie.name}, Seat: ${req.body.seat}, Date: ${foundMovie.date}, Time: ${foundMovie.time}`;
+                sendEmail(foundCustomer.email, message);
+                res.redirect(`/movies/${id}/purchase`);
             })
             .catch((err) => {
-                
+                let errors = [];
                 if (err.name === "SequelizeValidationError") {
-                    let errors = [];
                     for (let i = 0; i < err.errors.length; i++) {
                         errors.push(err.errors[i].message);
                     }
                     let message = errors.join(",");
-                    res.redirect(`/movies/${id}/add-cast?error=${message}`);
+                    res.redirect(`/movies/${id}/purchase?error=${message}`);
                 } else {
                     res.send(err);
                 }
-            });
+            });      
     } 
 }
 

@@ -12,11 +12,51 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Movie.init({
-    name: DataTypes.STRING,
-    genre: DataTypes.STRING,
-    date: DataTypes.DATEONLY,
-    time: DataTypes.TIME,
-    price: DataTypes.INTEGER
+    name: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Name is required."
+        }
+      }
+    },
+    genre: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Genre is required."
+        }
+      }
+    },
+    date: {
+      type: DataTypes.DATEONLY,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Date is required."
+        }
+      }
+    },
+    time: {
+      type: DataTypes.TIME,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Time is required."
+        }
+      }
+    },
+    price: {
+      type: DataTypes.INTEGER,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Price is required."
+        }
+      }
+    },
   }, {
     sequelize,
     modelName: 'Movie',

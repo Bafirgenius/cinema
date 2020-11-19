@@ -10,16 +10,60 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "CustomerId"
       });
     }
+    getFullName() {
+      return `${this.first_name} ${this.last_name}`;
+    }
   };
   Customer.init({
-    first_name: DataTypes.STRING,
-    last_name: DataTypes.STRING,
-    phone_number: DataTypes.STRING,
-    gender: DataTypes.STRING,
-    email: DataTypes.STRING
+    first_name: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "First name is required."
+        }
+      }
+    },
+    last_name: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Last name is required."
+        }
+      }
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Phone number is required."
+        }
+      }
+    },
+    gender: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Gender is required."
+        }
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Email is required."
+        }
+      }
+    },
   }, {
     sequelize,
     modelName: 'Customer',
   });
+  
   return Customer;
 };
