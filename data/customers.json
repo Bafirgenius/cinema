@@ -1,0 +1,30 @@
+[
+    {
+        "first_name" : "Angga",
+        "last_name" : "Setiawan",
+        "phone_number" : "081324565876554",
+        "gender" : "male",
+        "email" : "angga@gmail.com"
+    },
+    {
+        "first_name" : "Bagus",
+        "last_name" : "Kurniawan",
+        "phone_number" : "0845678645634",
+        "gender" : "male",
+        "email" : "bagus@gmail.com"
+    },
+    {
+        "first_name" : "Diana",
+        "last_name" : "Natasha",
+        "phone_number" : "0882545486543",
+        "gender" : "female",
+        "email" : "diana@gmail.com"
+    },
+    {
+        "first_name" : "Anisa",
+        "last_name" : "Lestari",
+        "phone_number" : "086455835464",
+        "gender" : "female",
+        "email" : "anisa@gmail.com"
+    }
+]

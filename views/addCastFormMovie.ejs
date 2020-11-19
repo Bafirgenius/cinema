@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <title>Add Cast</title>
+</head>
+<body>
+    <%- include("partials/navigation") %>
+
+    <% if (errors) { %>
+        <% for (let i = 0; i < errors.length; i++) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= errors[i] %>
+              </div>
+        <!-- <p style="color:red;text-align:center"><%= errors[i] %></p> -->
+        <% } %>
+    <% } %>
+
+    <div class="row ml-3 mr-3">
+        <div class="col">
+            <div class="p-3 mb-2 bg-secondary text-white text-center">
+                <h1><%= movie.name %></h1>
+            </div>
+        </div>
+        <div class="col">
+            <h1 class="text-center">Add Cast</h1>
+            <form action="/movies/<%= movie.id %>/add-cast" method="post" style="width:40%;margin:auto">
+                <div class="form-group" >
+                    <label for="genre-select">Actor/Actress</label>
+                    <select class="form-control" name="CastId">
+                        <option value="">--SELECT--</option>
+                        <% for (let i = 0; i < casts.length; i++) { %>
+                            <option value="<%= casts[i].id %>"><%= `${casts[i].getFullName()}` %></option>
+                        <% } %>
+                    </select>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <input type="text" class="form-control" name="role" placeholder="e.g: Lead Actor">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary ">Save</button><a class="ml-3" href="/movies"><button type="button" class="btn btn-danger">Cancel</button></a>
+                </div>
+            </form>
+        </div> 
+    </div> 
+    <div class="ml-3 mr-3">
+        <h1 class="text-left">Cast List</h1>
+        <div>
+            <table class="table table-striped border">
+                <thead>
+                    <tr>
+                        <th scope="col">Actor/Actress</th>
+                        <th scope="col">Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (let i = 0; i < movie.Casts.length; i++) { %>
+                        <% let castIds = [] %>
+                        <tr>
+                            <td><%= `${movie.Casts[i].getFullName()}` %></td>
+                            <% for (let j = 0; j < movieCasts.length; j++) { %>
+                                <% if (movieCasts[j].CastId === movie.Casts[i].id && !castIds.includes(movieCasts[j].CastId)) { %>
+                                    <% castIds.push(movieCasts[j].CastId); %>
+                                    <td><%= movieCasts[j].role %></td>
+                                <% } %>
+                            <% } %>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div> 
+<%- include("partials/foot") %>
