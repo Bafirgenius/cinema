@@ -2,6 +2,7 @@ const { Movie, Customer, CustomerMovie } = require("../models/index");
 const checkSeats = require("../helpers/checkSeats");
 const checkSeats2 = require("../helpers/checkSeats2");
 const sendEmail = require("../helpers/sendEmail");
+const formatRupiah = require("../helpers/formatRupiah");
 
 class MovieController {
     static read(req, res) {
@@ -15,7 +16,7 @@ class MovieController {
                 return CustomerMovie.findAll()
             })
             .then((data) => {
-                res.render("movieList", { movies: movies, customerMovies: data, checkSeats2});
+                res.render("movieList", { movies: movies, customerMovies: data, checkSeats2, formatRupiah});
             })
             .catch((err) => {
                 res.send(err);
@@ -153,36 +154,48 @@ class MovieController {
         const obj = {
             seat: req.body.seat,
             MovieId: id,
-            CustomerId: req.body.CustomerId,
+            CustomerId: Number(req.body.CustomerId)
         }
-        let foundMovie = {};
-        let foundCustomer = {};
-        Movie.findByPk(id)
-            .then((data) => {
-                foundMovie = data;
-                return Customer.findByPk(req.body.CustomerId)
-            })
-            .then((data) => {
-                foundCustomer = data;
-                return CustomerMovie.create(obj)
-            })
-            .then((data) => {
-                let message = `${foundMovie.name}, Seat: ${req.body.seat}, Date: ${foundMovie.date}, Time: ${foundMovie.time}`;
-                sendEmail(foundCustomer.email, message);
-                res.redirect(`/movies/${id}/purchase`);
-            })
-            .catch((err) => {
-                let errors = [];
-                if (err.name === "SequelizeValidationError") {
-                    for (let i = 0; i < err.errors.length; i++) {
-                        errors.push(err.errors[i].message);
+        let errorMessages = [];
+        if (!obj.CustomerId && !obj.seat) {
+            errorMessages.push("Customer is required.");
+            errorMessages.push("Seat is required.");
+            res.redirect(`/movies/${id}/purchase?error=${errorMessages.join(",")}`);
+
+        } else if (!obj.CustomerId) {
+            errorMessages.push("Customer is required.");
+            res.redirect(`/movies/${id}/purchase?error=${errorMessages.join(",")}`);
+
+        } else {
+            let foundMovie = {};
+            let foundCustomer = {};
+            Movie.findByPk(id)
+                .then((data) => {
+                    foundMovie = data;
+                    return Customer.findByPk(obj.CustomerId)
+                })
+                .then((data) => {
+                    foundCustomer = data;
+                    return CustomerMovie.create(obj)
+                })
+                .then((data) => {
+                    let message = `${foundMovie.name}, Seat: ${req.body.seat}, Date: ${foundMovie.date}, Time: ${foundMovie.time}`;
+                    sendEmail(foundCustomer.email, message);
+                    res.redirect(`/movies/${id}/purchase`);
+                })
+                .catch((err) => {
+                    let errors = [];
+                    if (err.name === "SequelizeValidationError") {
+                        for (let i = 0; i < err.errors.length; i++) {
+                            errors.push(err.errors[i].message);
+                        }
+                        let message = errors.join(",");
+                        res.redirect(`/movies/${id}/purchase?error=${message}`);
+                    } else {
+                        res.send(err);
                     }
-                    let message = errors.join(",");
-                    res.redirect(`/movies/${id}/purchase?error=${message}`);
-                } else {
-                    res.send(err);
-                }
-            });      
+                });  
+        }    
     } 
 }
 

@@ -20,10 +20,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     CustomerId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       validate: {
+        notNull: {
+          args: true,
+          msg: "Customer is required."
+        },
         isNumeric: {
           args: true,
-          msg: "Customer is required"
+          msg: "Customer is required."
         }
       }
     },

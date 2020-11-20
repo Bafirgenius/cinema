@@ -66,7 +66,7 @@ class AdminController {
                     if (data) {
                         if (compare(req.body.password, data.password)) {
                             req.session.name = Admin.getFullName(data.first_name, data.last_name);
-                            res.redirect(`/?name=${req.session.name}`);
+                            res.redirect("/");
                         } else {
                             let message = "Password does not match the username."
                             res.redirect(`/login?error=${message}`);

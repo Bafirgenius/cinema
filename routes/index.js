@@ -12,7 +12,7 @@ route.post("/login", AdminController.loginPost);
 
 route.use(authentication);
 route.get("/", (req, res) => {
-    let name = req.query.name;
+    let name = req.session.name;
     res.render("home", { name });
 });
 

@@ -1,5 +1,4 @@
 const { Movie, Customer, CustomerMovie } = require("../models/index");
-// const getAge = require("../helpers/getAge");
 
 class CustomerController {
     static read(req, res) {

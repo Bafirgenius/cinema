@@ -31,7 +31,7 @@
                         <td><%= element.genre %></td>
                         <td><%= element.date %></td>
                         <td><%= element.time %></td>
-                        <td><%= element.price %></td>
+                        <td><%= formatRupiah(element.price) %></td>
                             <td><a href="/movies/<%= element.id %>/edit"><button type="button" class="btn btn-info">Edit</button></a>
                                 <a class="ml-3" href="/movies/<%= element.id %>/delete"><button type="button" class="btn btn-info">Delete</button></a>
                                     <a class="ml-3" href="/movies/<%= element.id %>/purchase"><button type="button" class="btn btn-info">Purchase</button></a>
