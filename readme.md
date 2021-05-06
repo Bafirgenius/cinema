@@ -1,1 +1,3 @@
-# Movie App Sequelize fsakfmidafidnsaif
+# Movie App Sequelize
+
+sgrfg
